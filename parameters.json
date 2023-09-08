@@ -1,5 +1,5 @@
 {
-    "directories": ["./data_WGAN_GP/v1", "./data_WGAN_GP/v1/samples", "./data_WGAN_GP/v1/weights", "./data_WGAN_GP/v1/log"],
+    "directories": ["./data/v1", "./data/v1/samples", "./data/v1/weights", "./data/v1/log"],
     "dataset_dir": "./dataset",
     "seed": 1,
     "num_epochs": 100,
