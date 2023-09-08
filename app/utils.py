@@ -70,7 +70,7 @@ def load_checkpoint(path, generator, discriminator, optim_g, optim_d):
     optim_g.load_state_dict(checkpoint['optimizer_g_state_dict'])
     optim_d.load_state_dict(checkpoint['optimizer_d_state_dict'])
     
-    epoch = checkpoint['epoch']
+    epoch = checkpoint['epoch'] + 1
     losses_g = checkpoint['losses_g']
     losses_d = checkpoint['losses_d']
     
