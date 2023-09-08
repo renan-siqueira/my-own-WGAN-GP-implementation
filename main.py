@@ -35,7 +35,7 @@ def main():
     optim_g = optim.Adam(generator.parameters(), lr=params["lr_g"], betas=(params['g_beta_min'], params['g_beta_max']))
     optim_d = optim.Adam(discriminator.parameters(), lr=params["lr_d"], betas=(params['d_beta_min'], params['d_beta_max']))
 
-    last_epoch, losses_g, losses_d = load_checkpoint(f"{params['weights_path']}/checkpoint.pth", generator, discriminator, optim_g, optim_d)
+    last_epoch, losses_g, losses_d = load_checkpoint(f'{params["directories"][2]}/checkpoint.pth', generator, discriminator, optim_g, optim_d)
 
     losses_g, losses_d = train_model(
         generator=generator,
