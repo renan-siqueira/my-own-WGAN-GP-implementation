@@ -31,3 +31,26 @@ Training traditional GANs (Generative Adversarial Networks) often faces stabilit
 Enter WGAN-GP, which introduces the gradient penalty. By replacing weight clipping with the gradient penalty, WGAN-GP ensures the critic function remains Lipschitz continuous without constraining the network's expressive power. This tweak improves training stability and helps yield higher-quality outputs.
 
 If you're looking for a GAN approach that combines robust training with the capability of producing high-quality outputs, WGAN-GP is undoubtedly an excellent choice.
+
+# How to use this project
+
+After cloning this repository, create a python virtual environment and install the dependencies directly from requirements.txt file.
+
+Before starting the GAN training, it is necessary to create a folder called "dataset" in the root of the project. By default, pytorch requires at least one label for images. To do this, just create a folder inside the "dataset" folder, with a name of your choice (it can be any name). Once that's done, just copy the images you want to use for training into that folder.
+
+The project has a file called "parameters.json" where you can configure the GAN training parameters and project paths.
+
+The file is already configured with optimized parameters for training this architecture but, if yout wish, feel free to change it according to your preference.
+
+To start training, run the "main.py" file.
+
+After starting the execution, you will be able to follow the training through the terminal and through the log file that will be created in the directory configured in "parameters.json".
+
+In addition, at the end of each epoch, you will be able to view a sample of the images generated within the configured directory, in the "samples" folder.
+
+# How to use GPU
+
+This implementation supports the use of GPU.
+I used CUDA 12+ and to install torch, I used this command (after creating the virtual environment and installing the dependencies):
+
+```pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cu121```

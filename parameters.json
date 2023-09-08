@@ -1,0 +1,23 @@
+{
+    "directories": ["./data/v1", "./data/v1/samples", "./data/v1/weights", "./data/v1/log"],
+    "dataset_dir": "./dataset",
+    "seed": 1,
+    "num_epochs": 100,
+    "n_critic": 1,
+    "image_size": 64,
+    "batch_size": 128,
+    "z_dim": 100,
+    "lr_g": 0.0002,
+    "lr_d": 0.0002,
+    "g_beta_min": 0.5,
+    "g_beta_max": 0.999,
+    "l_beta_min": 0.5,
+    "l_beta_max": 0.999,
+    "sample_size": 64,
+    "alpha": 0.2,
+    "label_smoothing": 0.9,
+    "features_g": 64,
+    "features_d": 64,
+    "channels_img": 3,
+    "save_model_at": 1
+}
