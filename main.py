@@ -3,11 +3,10 @@ import torch
 import torch.optim as optim
 import time
 
-from torch.autograd.variable import Variable
-from generator import Generator
-from discriminator import Discriminator
-from train import train_model
-from utils import print_datetime, check_if_gpu_available, check_if_set_seed, create_dirs, weights_init, dataloader, load_checkpoint, plot_losses
+from app.generator import Generator
+from app.discriminator import Discriminator
+from app.training import train_model
+from app.utils import print_datetime, check_if_gpu_available, check_if_set_seed, create_dirs, weights_init, dataloader, load_checkpoint, plot_losses
 
 
 def main():
