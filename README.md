@@ -39,7 +39,7 @@ If you're looking for a GAN approach that combines robust training with the abil
 
 To clone this repository, use the following command:
 
-```git clone https://github.com/renan-siqueira/my-own-gan.git```
+```git clone https://github.com/renan-siqueira/my-own-gan-implementation.git```
 
 ## 2. Creating and activating the virtual environment:
 
