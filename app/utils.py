@@ -6,6 +6,26 @@ from torchvision import transforms, datasets
 import datetime
 
 
+def create_next_version_directory(base_dir):
+    # Obtém as versões existentes no formato v1, v2, etc.
+    versions = [d for d in os.listdir(base_dir) if d.startswith('v') and os.path.isdir(os.path.join(base_dir, d))]
+
+    # Calcula a próxima versão
+    if not versions:
+        next_version = 1
+    else:
+        next_version = max(int(v[1:]) for v in versions) + 1
+
+    # Define o caminho base para a próxima versão
+    new_dir_base = os.path.join(base_dir, f'v{next_version}')
+
+    # Cria os diretórios para a nova versão
+    for sub_dir in ['', 'samples', 'weights', 'log']:
+        os.makedirs(os.path.join(new_dir_base, sub_dir), exist_ok=True)
+
+    return new_dir_base
+
+
 def print_datetime(label="Current Date and Time"):
     data_hora_atual = datetime.datetime.now()
     data_hora_formatada = data_hora_atual.strftime("%d/%m/%Y %H:%M:%S")
@@ -31,11 +51,6 @@ def check_if_set_seed(seed=None):
         print(f'Using the Seed: {seed}')
     else:
         print(f'Using random seed.')
-
-
-def create_dirs(directories):
-    for directory in directories:
-            os.makedirs(directory, exist_ok=True)
 
 
 def dataloader(directory, image_size, batch_size):
