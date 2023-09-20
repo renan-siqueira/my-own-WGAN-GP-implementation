@@ -1,5 +1,5 @@
 {
-    "directories": ["./data/v1", "./data/v1/samples", "./data/v1/weights", "./data/v1/log"],
+    "directories": "./data",
     "dataset_dir": "./dataset",
     "seed": 1,
     "num_epochs": 100,
