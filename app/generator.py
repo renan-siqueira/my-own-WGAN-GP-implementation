@@ -7,20 +7,16 @@ class Generator(nn.Module):
         
         layers = []
         
-        # Determinar quantas camadas são necessárias com base no tamanho da imagem
         num_blocks = int(math.log2(img_size)) - 3  # 3 é subtraído porque começamos com 8x8 (2^3) e queremos ir até img_size
         out_channels = features_g * (2 ** num_blocks)
         
-        # Bloco inicial
         layers.append(self._block(z_dim, out_channels, 4, 1, 0))
         
-        # Blocos intermediários
         for i in range(num_blocks):
             in_channels = out_channels
             out_channels = in_channels // 2
             layers.append(self._block(in_channels, out_channels, 4, 2, 1))
         
-        # Camada final
         layers.append(nn.ConvTranspose2d(out_channels, channels_img, 4, 2, 1))
         layers.append(nn.Tanh())
         

@@ -6,20 +6,19 @@ from torchvision import transforms, datasets
 import datetime
 
 
-def create_next_version_directory(base_dir):
-    # Obtém as versões existentes no formato v1, v2, etc.
+def create_next_version_directory(base_dir, continue_last_training):
     versions = [d for d in os.listdir(base_dir) if d.startswith('v') and os.path.isdir(os.path.join(base_dir, d))]
 
-    # Calcula a próxima versão
     if not versions:
         next_version = 1
     else:
+        if continue_last_training:
+            return f"v{max(int(v[1:]) for v in versions)}"
+        
         next_version = max(int(v[1:]) for v in versions) + 1
 
-    # Define o caminho base para a próxima versão
     new_dir_base = os.path.join(base_dir, f'v{next_version}')
 
-    # Cria os diretórios para a nova versão
     for sub_dir in ['', 'samples', 'weights', 'log']:
         os.makedirs(os.path.join(new_dir_base, sub_dir), exist_ok=True)
 
