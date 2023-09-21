@@ -3,6 +3,7 @@ import torch
 import torch.optim as optim
 import time
 import os
+import shutil
 
 from app.generator import Generator
 from app.discriminator import Discriminator
@@ -41,6 +42,9 @@ def main():
     data_dir = os.path.join(params['data_directory'], training_version)
     print('Training version:', training_version)
 
+    # Create a copy of parameters in training version folder
+    shutil.copy('parameters.json', os.path.join(data_dir, 'parameters.json'))
+
     last_epoch, losses_g, losses_d = load_checkpoint(os.path.join(data_dir, 'weights', 'checkpoint.pth'), generator, discriminator, optim_g, optim_d)
 
     losses_g, losses_d = train_model(
@@ -69,7 +73,7 @@ def main():
     print(f"The code took {round(time_total, 1)} minutes to execute.")
     print_datetime()
 
-    plot_losses(losses_g, losses_d, save_plot_image=data_dir)
+    plot_losses(losses_g, losses_d, save_plot_image=os.path.join(data_dir, f"{training_version}.jpg"))
 
 
 if __name__ == '__main__':
