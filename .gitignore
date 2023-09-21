@@ -2,5 +2,8 @@
 __pycache__
 dataset
 data
+images_generated
 *.png
 *.jpg
+*.mp4
+*.avi

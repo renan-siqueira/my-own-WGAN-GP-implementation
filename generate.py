@@ -6,6 +6,7 @@ import torch
 import torchvision.utils as vutils
 
 from PIL import Image
+from tqdm import tqdm
 
 from app.generator import Generator
 from app.utils import check_if_gpu_available
@@ -49,17 +50,20 @@ def main(output_directory, train_version, num_samples=4):
 
     latent_dimension = params['z_dim']
 
+    print("Generating images...")
     images = generate_images(generator, latent_dimension, num_samples, device)
     images = (images + 1) / 2.0
 
     os.makedirs(output_directory, exist_ok=True)
 
-    for i in range(num_samples):
+    print("Saving individual images...")
+    for i in tqdm(range(num_samples)):
         individual_img = images[i].cpu().clamp(0, 1)
         img = tensor_to_PIL_image(individual_img)
         img_path = os.path.join(output_directory, f'image_{i}.jpg')
         img.save(img_path)
 
+    print("Saving image grid...")
     grid_img = vutils.make_grid(images, nrow=int(num_samples**0.5), padding=2, normalize=True)
     img_grid = tensor_to_PIL_image(grid_img.cpu())
     img_grid_path = os.path.join(output_directory, 'grid.jpg')
@@ -71,8 +75,8 @@ def main(output_directory, train_version, num_samples=4):
 if __name__ == "__main__":
 
     # Change Here
-    output_directory = 'generated_images/'
-    train_version = 'v4'
+    train_version = 'v7'
+    output_directory = f'images_generated/{train_version}/'
     num_samples = 4
 
     main(output_directory, train_version, num_samples)
