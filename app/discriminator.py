@@ -13,12 +13,11 @@ class Discriminator(nn.Module):
         layers.append(nn.LeakyReLU(alpha))
         
         in_channels = features_d
-        for i in range(num_blocks - 1):  # -1 para deixar a última camada fora do loop
+        for i in range(num_blocks - 1):
             out_channels = in_channels * 2
             layers.append(self._block(in_channels, out_channels, alpha))
             in_channels = out_channels
 
-        # Última camada do discriminador sem BatchNorm
         layers.append(nn.Conv2d(in_channels, in_channels * 2, 4, 2, 1))
         layers.append(nn.LeakyReLU(alpha))
         layers.append(nn.Conv2d(in_channels * 2, 1, 4, 2, 0))
