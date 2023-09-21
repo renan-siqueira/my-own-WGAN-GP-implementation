@@ -23,13 +23,13 @@ def create_next_version_directory(base_dir):
     for sub_dir in ['', 'samples', 'weights', 'log']:
         os.makedirs(os.path.join(new_dir_base, sub_dir), exist_ok=True)
 
-    return new_dir_base
+    return f"v{next_version}"
 
 
 def print_datetime(label="Current Date and Time"):
     data_hora_atual = datetime.datetime.now()
     data_hora_formatada = data_hora_atual.strftime("%d/%m/%Y %H:%M:%S")
-    print(label + ":", data_hora_formatada)
+    print(f'\n{label}: {data_hora_formatada}')
 
 
 def check_if_gpu_available():
