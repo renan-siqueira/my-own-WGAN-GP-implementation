@@ -8,8 +8,20 @@ from app.generator import Generator
 from app.utils import check_if_gpu_available
 
 
+
+def slerp(val, low, high):
+    low_norm = low / torch.norm(low, dim=1, keepdim=True)
+    high_norm = high / torch.norm(high, dim=1, keepdim=True)
+    omega = torch.acos(torch.clamp(torch.matmul(low_norm, high_norm.t()), -1, 1))
+    so = torch.sin(omega)
+    if so == 0:
+        return (1.0 - val) * low + val * high
+    interpolation = (torch.sin((1.0 - val) * omega) / so * low) + (torch.sin(val * omega) / so * high)
+    return interpolation
+
+
 def interpolate(z1, z2, alpha):
-    return alpha * z1 + (1 - alpha) * z2
+    return slerp(alpha, z1, z2)
 
 
 def multi_interpolate(generator, z_list, steps_between):
@@ -62,7 +74,7 @@ def main(train_version, interpolate_points, steps_between, fps, video_name):
 
 if __name__ == '__main__':
 
-    train_version = 'v8'
+    train_version = 'v7'
 
     interpolate_points = 10
     steps_between = 30

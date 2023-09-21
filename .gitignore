@@ -3,6 +3,7 @@ __pycache__
 dataset
 data
 images_generated
+notes.txt
 *.png
 *.jpg
 *.mp4
