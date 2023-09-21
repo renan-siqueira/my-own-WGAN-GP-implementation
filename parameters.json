@@ -2,13 +2,13 @@
     "data_directory": "./data",
     "dataset_dir": "./dataset",
     "seed": 1,
-    "num_epochs": 100,
+    "num_epochs": 50,
     "n_critic": 1,
     "image_size": 256,
     "batch_size": 32,
     "z_dim": 100,
-    "lr_g": 0.0002,
-    "lr_d": 0.0002,
+    "lr_g": 0.0005,
+    "lr_d": 0.0001,
     "g_beta_min": 0.5,
     "g_beta_max": 0.999,
     "d_beta_min": 0.5,
@@ -20,5 +20,5 @@
     "features_d": 64,
     "channels_img": 3,
     "save_model_at": 1,
-    "continue_last_training": true
+    "continue_last_training": false
 }
