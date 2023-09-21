@@ -19,5 +19,6 @@
     "features_g": 64,
     "features_d": 64,
     "channels_img": 3,
-    "save_model_at": 1
+    "save_model_at": 1,
+    "continue_last_training": true
 }
