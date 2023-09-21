@@ -7,6 +7,14 @@ The architecture chosen for this project was WGAN-GP.
 
 ---
 
+## With this project you will be able to:
+
+- Train your own GAN with the images of your choice;
+- Generate as many images as you want after completing the training (Beta version);
+- Produce videos through interpolation of the generated images (Beta version);
+
+---
+
 # How to Use This Project
 
 ## 1. Cloning the Repository:
@@ -67,6 +75,39 @@ $ python main.py
 - You can follow the progress directly in the terminal or console.
 - A log file will be generated in the directory specified in the `parameters.json` file.
 - At the end of each epoch, samples of generated images will be saved in the configured directory, inside the `samples` folder.
+
+## 8. How to generate images after completing the training (Beta version):
+
+Open the `generate.py` file, locate the portion of the code that calls the `main` function (end of the file), and modify the variables to reflect your scenario:
+```python
+    train_version = 'v1' # Set the version you wish to use to generate the images
+    output_directory = f'images_generated/{train_version}/' # Only change the beginning of the path to a folder where you wish to save the images
+    num_samples = 4 # Number of images you want to generate
+
+```
+
+Execute this file with command:
+```bash
+$ python generate.py
+```
+
+## 9. How to generate a video through interpolation of the generated images (Beta version):
+
+Open the `interpolate.py` file, locate the portion of the code that calls the `main` function (end of the file), and modify the variables to reflect your scenario:
+```python
+    train_version = 'v1' # Set the version you wish to use to generate the images
+
+    interpolate_points = 10 # Specify how many images you wish to interpolate
+    steps_between = 30 # Specify how many images you wish to generate between each interpolation
+    fps = 30 # Specify how many frames per second the video should have
+
+    video_name = 'video.avi' # Specify the name of the output video (keep the .avi extension)
+```
+
+Execute this file with command:
+```bash
+$ python interpolate.py
+```
 
 ---
 
