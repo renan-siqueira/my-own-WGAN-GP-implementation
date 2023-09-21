@@ -19,11 +19,7 @@ def main():
 
     check_if_gpu_available()
     check_if_set_seed(params["seed"])
-    training_version = create_next_version_directory(params["data_directory"])
 
-    data_dir = os.path.join(params['data_directory'], training_version)
-
-    print('Training version:', training_version)
     print('Number of repetitions for the discriminator:', params['n_critic'])
     print(f'Image size: {params["image_size"]}x{params["image_size"]}\n')
 
@@ -39,6 +35,11 @@ def main():
 
     optim_g = optim.Adam(generator.parameters(), lr=params["lr_g"], betas=(params['g_beta_min'], params['g_beta_max']))
     optim_d = optim.Adam(discriminator.parameters(), lr=params["lr_d"], betas=(params['d_beta_min'], params['d_beta_max']))
+
+    training_version = create_next_version_directory(params["data_directory"], params['continue_last_training'])
+
+    data_dir = os.path.join(params['data_directory'], training_version)
+    print('Training version:', training_version)
 
     last_epoch, losses_g, losses_d = load_checkpoint(os.path.join(data_dir, 'weights', 'checkpoint.pth'), generator, discriminator, optim_g, optim_d)
 
