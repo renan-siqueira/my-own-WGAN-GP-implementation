@@ -5,17 +5,17 @@ import time
 import os
 import shutil
 
-from app.generator import Generator
-from app.discriminator import Discriminator
-from app.training import train_model
-from app.utils import print_datetime, check_if_gpu_available, check_if_set_seed, create_next_version_directory, weights_init, dataloader, load_checkpoint, plot_losses
+from src.app.generator import Generator
+from src.app.discriminator import Discriminator
+from src.app.training import train_model
+from src.app.utils import print_datetime, check_if_gpu_available, check_if_set_seed, create_next_version_directory, weights_init, dataloader, load_checkpoint, plot_losses
 
 
-def main():
+def main(path_data, path_dataset, path_train_params):
     time_start = time.time()
     print_datetime()
 
-    with open('parameters.json', 'r') as f:
+    with open(path_train_params, 'r') as f:
         params = json.load(f)
 
     check_if_gpu_available()
@@ -32,18 +32,18 @@ def main():
     discriminator = Discriminator(params["channels_img"], params["features_d"], params["alpha"], img_size=params['image_size']).to(device)
     discriminator.apply(weights_init)
 
-    data_loader = dataloader(params["dataset_dir"], params["image_size"], params["batch_size"])
+    data_loader = dataloader(path_dataset, params["image_size"], params["batch_size"])
 
     optim_g = optim.Adam(generator.parameters(), lr=params["lr_g"], betas=(params['g_beta_min'], params['g_beta_max']))
     optim_d = optim.Adam(discriminator.parameters(), lr=params["lr_d"], betas=(params['d_beta_min'], params['d_beta_max']))
 
-    training_version = create_next_version_directory(params["data_directory"], params['continue_last_training'])
+    training_version = create_next_version_directory(path_data, params['continue_last_training'])
 
-    data_dir = os.path.join(params['data_directory'], training_version)
+    data_dir = os.path.join(path_data, training_version)
     print('Training version:', training_version)
 
     # Create a copy of parameters in training version folder
-    shutil.copy('parameters.json', os.path.join(data_dir, 'parameters.json'))
+    shutil.copy(path_train_params, os.path.join(data_dir, path_train_params.split('/')[-1]))
 
     last_epoch, losses_g, losses_d = load_checkpoint(os.path.join(data_dir, 'weights', 'checkpoint.pth'), generator, discriminator, optim_g, optim_d)
 

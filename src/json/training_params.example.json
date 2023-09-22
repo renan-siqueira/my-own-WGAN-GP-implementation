@@ -1,10 +1,8 @@
 {
-    "data_directory": "./data",
-    "dataset_dir": "./dataset",
     "seed": 1,
-    "num_epochs": 50,
+    "num_epochs": 100,
     "n_critic": 1,
-    "image_size": 256,
+    "image_size": 32,
     "batch_size": 32,
     "z_dim": 100,
     "lr_g": 0.0004,

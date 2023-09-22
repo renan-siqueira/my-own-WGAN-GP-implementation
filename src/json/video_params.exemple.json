@@ -1,0 +1,6 @@
+{
+    "train_version": "v1",
+    "interpolate_points": 10,
+    "steps_between": 30,
+    "fps": 30
+}
