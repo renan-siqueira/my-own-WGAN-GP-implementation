@@ -1,12 +1,13 @@
+import os
 import json
 import torch
 import numpy as np
 import cv2
 from tqdm import tqdm
 
-from app.generator import Generator
-from app.utils import check_if_gpu_available
-
+from src.app.generator import Generator
+from src.app.utils import check_if_gpu_available
+from .resize_image import process_and_resize_image
 
 
 def slerp(val, low, high):
@@ -39,47 +40,55 @@ def multi_interpolate(generator, z_list, steps_between):
     return generated_images
 
 
-def main(train_version, interpolate_points, steps_between, fps, video_name):
-    with open('parameters.json', 'r') as f:
-        params = json.load(f)
+def main(path_data, path_train_params, path_video_params, path_videos_generated, upscale_width=None):
+    
+    with open(path_train_params, 'r') as f:
+        train_params = json.load(f)
+
+    with open(path_video_params, 'r') as f:
+        video_params = json.load(f)
+
+    output_directory = os.path.join(path_videos_generated, video_params['train_version'])
 
     check_if_gpu_available()
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-    checkpoint_path = f'data/{train_version}/weights/checkpoint.pth'
+    checkpoint_path = f'{path_data}/{video_params["train_version"]}/weights/checkpoint.pth'
     checkpoint = torch.load(checkpoint_path)
 
-    generator = Generator(params["z_dim"], params["channels_img"], params["features_g"], img_size=params['image_size']).to(device)
+    generator = Generator(train_params["z_dim"], train_params["channels_img"], train_params["features_g"], img_size=train_params['image_size']).to(device)
     generator.load_state_dict(checkpoint['generator_state_dict'])
     generator.eval()
 
-    z_points = [torch.randn(1, params["z_dim"]).to(device) for _ in range(interpolate_points)]
+    z_points = [torch.randn(1, train_params["z_dim"]).to(device) for _ in range(video_params['interpolate_points'])]
 
     print("Generating interpolated images...")
-    generated_images = multi_interpolate(generator, z_points, steps_between)
+    generated_images = multi_interpolate(generator, z_points, video_params['steps_between'])
 
-    frame_size = (params["image_size"], params["image_size"])
-    out = cv2.VideoWriter(video_name, cv2.VideoWriter_fourcc(*'MJPG'), fps, frame_size)
+    os.makedirs(output_directory, exist_ok=True)
+
+    if upscale_width:
+        frame_size = (upscale_width, upscale_width)
+    else:
+        frame_size = (train_params["image_size"], train_params["image_size"])
+
+    out = cv2.VideoWriter(
+        os.path.join(output_directory, f'video_{frame_size[0]}x{frame_size[1]}_{video_params["fps"]}fps.avi'), 
+        cv2.VideoWriter_fourcc(*'MJPG'), 
+        video_params["fps"], 
+        frame_size
+    )
 
     print("Writing images to video...")
     for image in tqdm(generated_images):
         image_np = image.squeeze(0).cpu().detach().numpy().transpose(1, 2, 0)
         image_np = (image_np + 1) / 2
         frame = (image_np * 255).astype(np.uint8)
+        
+        if upscale_width:
+            frame = process_and_resize_image(frame, new_width=upscale_width)
+
         frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
         out.write(frame)
 
     out.release()
-
-
-if __name__ == '__main__':
-
-    train_version = 'v7'
-
-    interpolate_points = 10
-    steps_between = 30
-    fps = 30
-
-    video_name = 'video.avi'
-
-    main(train_version, interpolate_points, steps_between, fps, video_name)

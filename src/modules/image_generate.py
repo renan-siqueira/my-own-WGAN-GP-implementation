@@ -8,8 +8,8 @@ import torchvision.utils as vutils
 from PIL import Image
 from tqdm import tqdm
 
-from app.generator import Generator
-from app.utils import check_if_gpu_available
+from src.app.generator import Generator
+from src.app.utils import check_if_gpu_available
 
 
 def generate_latent_points(latent_dimension, num_samples, device):
@@ -32,23 +32,30 @@ def tensor_to_PIL_image(img_tensor):
     return Image.fromarray(img_array)
 
 
-def main(output_directory, train_version, num_samples=4):
-    with open('parameters.json', 'r') as f:
-        params = json.load(f)
+def main(path_data, path_train_params, path_images_params, path_images_generated):
+    
+    with open(path_train_params, 'r') as f:
+        train_params = json.load(f)
+
+    with open(path_images_params, 'r') as f:
+        images_params = json.load(f)
+    
+    num_samples = images_params['num_samples']
+    output_directory = os.path.join(path_images_generated, images_params["train_version"])
 
     check_if_gpu_available()
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-    checkpoint_path = f'data/{train_version}/weights/checkpoint.pth'
+    checkpoint_path = f'{path_data}/{images_params["train_version"]}/weights/checkpoint.pth'
 
     checkpoint = torch.load(checkpoint_path)
 
-    generator = Generator(params["z_dim"], params["channels_img"], params["features_g"], img_size=params['image_size']).to(device)
+    generator = Generator(train_params["z_dim"], train_params["channels_img"], train_params["features_g"], img_size=train_params['image_size']).to(device)
 
     generator.load_state_dict(checkpoint['generator_state_dict'])
     generator.eval()
 
-    latent_dimension = params['z_dim']
+    latent_dimension = train_params['z_dim']
 
     print("Generating images...")
     images = generate_images(generator, latent_dimension, num_samples, device)
@@ -70,13 +77,3 @@ def main(output_directory, train_version, num_samples=4):
     img_grid.save(img_grid_path)
 
     print(f"Images saved to {output_directory}")
-
-
-if __name__ == "__main__":
-
-    # Change Here
-    train_version = 'v7'
-    output_directory = f'images_generated/{train_version}/'
-    num_samples = 4
-
-    main(output_directory, train_version, num_samples)
