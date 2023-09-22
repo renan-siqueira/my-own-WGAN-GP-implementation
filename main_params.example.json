@@ -1,0 +1,7 @@
+{
+    "path_original_files": "__your_original_files_path__",
+    "copy_files_to_dataset": true,
+    "run_training": true,
+    "generate_image": true,
+    "generate_video": true
+}
