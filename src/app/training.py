@@ -1,8 +1,10 @@
+import datetime
 import torch
 import torchvision.utils as vutils
+import numpy as np
+
 from torch.autograd import Variable, grad
 from tqdm import tqdm
-import datetime
 
 
 def log_progresso(log_file, message):
@@ -25,6 +27,20 @@ def save_checkpoint(epoch, generator, discriminator, optim_g, optim_d, losses_g,
     }, path)
 
 
+def calculate_fid(images_real, images_fake, inception_model):
+    real_features = inception_model(images_real).detach().cpu().numpy()
+    fake_features = inception_model(images_fake).detach().cpu().numpy()
+
+    mu_real, sigma_real = real_features.mean(axis=0), np.cov(real_features, rowvar=False)
+    mu_fake, sigma_fake = fake_features.mean(axis=0), np.cov(fake_features, rowvar=False)
+    
+    diff_mu = mu_real - mu_fake
+    cov_mean = (sigma_real + sigma_fake) / 2
+    fid = diff_mu.dot(diff_mu) + np.trace(sigma_real + sigma_fake - 2*np.sqrt(cov_mean))
+    
+    return fid
+
+
 def gradient_penalty(discriminator, real_data, fake_data, device):
     alpha = torch.rand(real_data.size(0), 1, 1, 1).to(device)
     alpha = alpha.expand_as(real_data)
@@ -41,7 +57,9 @@ def gradient_penalty(discriminator, real_data, fake_data, device):
     gradients_norm = torch.sqrt(torch.sum(gradients ** 2, dim=1) + 1e-12)
     return ((gradients_norm - 1) ** 2).mean()
 
+
 def train_model(
+        inception_model,
         generator, 
         discriminator, 
         weights_path,
@@ -53,6 +71,7 @@ def train_model(
         data_loader, 
         device, 
         z_dim, 
+        lambda_gp,
         num_epochs, 
         last_epoch,
         save_model_at,
@@ -93,6 +112,11 @@ def train_model(
             # Generator update
             z = Variable(torch.randn(images.size(0), z_dim, 1, 1)).to(device)
             fake_images = generator(z)
+            real_images = images
+            
+            # FID Test
+            fid_score = calculate_fid(real_images, fake_images, inception_model)
+
             outputs = discriminator(fake_images).squeeze()
             g_loss = -torch.mean(outputs)
 
@@ -102,7 +126,7 @@ def train_model(
 
             pbar.set_description(f'Epoch {epoch}/{num_epochs}, g_loss: {g_loss.data}, d_loss: {d_loss.data}')
         
-        log_progresso(f"{log_dir}/trainning.log", f'Epoch {epoch}/{num_epochs}, g_loss: {g_loss.data}, d_loss: {d_loss.data}')
+        log_progresso(f"{log_dir}/trainning.log", f'Epoch {epoch}/{num_epochs}, g_loss: {g_loss.data}, d_loss: {d_loss.data}, FID: {fid_score}')
 
         losses_g.append(g_loss.data.cpu())
         losses_d.append(d_loss.data.cpu())
