@@ -1,5 +1,4 @@
 import os
-import json
 import torch
 import numpy as np
 import cv2
@@ -40,13 +39,7 @@ def multi_interpolate(generator, z_list, steps_between):
     return generated_images
 
 
-def main(path_data, path_train_params, path_video_params, path_videos_generated, upscale_width=None):
-    
-    with open(path_train_params, 'r') as f:
-        train_params = json.load(f)
-
-    with open(path_video_params, 'r') as f:
-        video_params = json.load(f)
+def main(train_params, video_params, path_data, path_videos_generated, upscale_width):
 
     output_directory = os.path.join(path_videos_generated, video_params['train_version'])
 
@@ -73,8 +66,8 @@ def main(path_data, path_train_params, path_video_params, path_videos_generated,
         frame_size = (train_params["image_size"], train_params["image_size"])
 
     out = cv2.VideoWriter(
-        os.path.join(output_directory, f'video_{frame_size[0]}x{frame_size[1]}_{video_params["fps"]}fps.avi'), 
-        cv2.VideoWriter_fourcc(*'MJPG'), 
+        os.path.join(output_directory, f'video_{frame_size[0]}x{frame_size[1]}_{video_params["fps"]}fps.mp4'), 
+        cv2.VideoWriter_fourcc(*'mp4v'), 
         video_params["fps"], 
         frame_size
     )

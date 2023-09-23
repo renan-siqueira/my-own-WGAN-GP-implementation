@@ -1,11 +1,14 @@
 .venv
 __pycache__
 
-dataset
+dataset*
 data
 generated
 
 settings.py
+rename_files_to_dataset.py
+copy_files_to_dataset.py
+
 main_params.json
 training_params.json
 image_params.json

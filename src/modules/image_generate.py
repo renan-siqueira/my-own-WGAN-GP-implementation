@@ -1,5 +1,4 @@
 import os
-import json
 import numpy as np
 
 import torch
@@ -10,6 +9,7 @@ from tqdm import tqdm
 
 from src.app.generator import Generator
 from src.app.utils import check_if_gpu_available
+from .resize_image import process_and_resize_image
 
 
 def generate_latent_points(latent_dimension, num_samples, device):
@@ -32,13 +32,7 @@ def tensor_to_PIL_image(img_tensor):
     return Image.fromarray(img_array)
 
 
-def main(path_data, path_train_params, path_images_params, path_images_generated):
-    
-    with open(path_train_params, 'r') as f:
-        train_params = json.load(f)
-
-    with open(path_images_params, 'r') as f:
-        images_params = json.load(f)
+def main(train_params, images_params, path_data, path_images_generated, upscale_width):
     
     num_samples = images_params['num_samples']
     output_directory = os.path.join(path_images_generated, images_params["train_version"])
@@ -67,13 +61,27 @@ def main(path_data, path_train_params, path_images_params, path_images_generated
     for i in tqdm(range(num_samples)):
         individual_img = images[i].cpu().clamp(0, 1)
         img = tensor_to_PIL_image(individual_img)
-        img_path = os.path.join(output_directory, f'image_{i}.jpg')
+        image_size_str = f"{train_params['image_size']}x{train_params['image_size']}"
+        
+        if upscale_width:
+            image_size_str = f"{upscale_width}x{upscale_width}"
+            img = np.asarray(img)
+            img = process_and_resize_image(img, new_width=upscale_width)
+            img = Image.fromarray(img)
+
+        img_path = os.path.join(output_directory, f'image_{image_size_str}_{i}.jpg')
         img.save(img_path)
 
     print("Saving image grid...")
     grid_img = vutils.make_grid(images, nrow=int(num_samples**0.5), padding=2, normalize=True)
     img_grid = tensor_to_PIL_image(grid_img.cpu())
-    img_grid_path = os.path.join(output_directory, 'grid.jpg')
+
+    if upscale_width:
+        img_grid = np.asarray(img_grid)
+        img_grid = process_and_resize_image(img_grid, new_width=upscale_width)
+        img_grid = Image.fromarray(img_grid)
+
+    img_grid_path = os.path.join(output_directory, f'grid_{image_size_str}.jpg')
     img_grid.save(img_grid_path)
 
     print(f"Images saved to {output_directory}")
