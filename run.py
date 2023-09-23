@@ -1,26 +1,50 @@
 import json
+import argparse
+import os
 
-from src.config.settings import PATH_MAIN_PARAMS, PATH_DATA, PATH_DATASET, PATH_IMAGES_GENERATED, PATH_VIDEOS_GENERATED, PATH_ORIGINAL_FILES, PATH_TRAIN_PARAMS, PATH_IMAGE_PARAMS, PATH_VIDEO_PARAMS
+from src.config import settings
 from src.modules import copy_files_to_dataset, run_training, image_generate, video_generate
 
 
-def main():
-    with open(PATH_MAIN_PARAMS, 'r') as f:
-        main_params = json.load(f)
+def get_params(path_file):
+    with open(path_file, 'r') as f:
+        params = json.load(f)
+    
+    return params
 
 
-    if main_params['copy_files_to_dataset']:
-        copy_files_to_dataset.main(PATH_ORIGINAL_FILES, PATH_DATASET, interval=1)
+def main(args):
+    
 
-    if main_params['run_training']:
-        run_training.main(PATH_DATA, PATH_DATASET, PATH_TRAIN_PARAMS)
+    if args.copy:
+        copy_files_to_dataset.main(settings.PATH_ORIGINAL_FILES, settings.PATH_DATASET, interval=1)
 
-    if main_params['generate_image']:
-        image_generate.main(PATH_DATA, PATH_TRAIN_PARAMS, PATH_IMAGE_PARAMS, PATH_IMAGES_GENERATED)
+    if args.training:
+        training_params = get_params(settings.PATH_TRAIN_PARAMS)
+        run_training.main(training_params, settings.PATH_DATA, settings.PATH_DATASET, settings.PATH_TRAIN_PARAMS)
 
-    if main_params['generate_video']:
-        video_generate.main(PATH_DATA, PATH_TRAIN_PARAMS, PATH_VIDEO_PARAMS, PATH_VIDEOS_GENERATED, upscale_width=None)
+    if args.image:
+        image_params = get_params(settings.PATH_IMAGE_PARAMS)
+        training_params = get_params(os.path.join(settings.PATH_DATA, image_params['train_version'], os.path.basename(settings.PATH_TRAIN_PARAMS)))
+
+        image_generate.main(training_params, image_params, settings.PATH_DATA, settings.PATH_IMAGES_GENERATED, upscale_width=args.upscale)
+
+    if args.video:
+        video_params = get_params(settings.PATH_VIDEO_PARAMS)
+        training_params = get_params(os.path.join(settings.PATH_DATA, video_params['train_version'], os.path.basename(settings.PATH_TRAIN_PARAMS)))
+
+        video_generate.main(training_params, video_params, settings.PATH_DATA, settings.PATH_VIDEOS_GENERATED, upscale_width=args.upscale)
 
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser(description="Script para treinar o gerador, gerar imagens e/ou vídeos a partir de um gerador treinado")
+
+    parser.add_argument('--copy', action='store_true', help='Se verdadeiro, copia arquivos para o dataset')
+    parser.add_argument('--training', action='store_true', help='Se verdadeiro, executa o treinamento')
+    parser.add_argument('--image', action='store_true', help='Se verdadeiro, gera imagens')
+    parser.add_argument('--video', action='store_true', help='Se verdadeiro, gera vídeos')
+    parser.add_argument('--upscale', type=int, default=None, help='Define a largura do upscale. Pode ser None ou um valor inteiro.')
+
+    args = parser.parse_args()
+    
+    main(args)

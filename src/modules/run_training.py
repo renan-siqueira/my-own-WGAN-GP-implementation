@@ -1,9 +1,10 @@
-import json
-import torch
-import torch.optim as optim
 import time
 import os
 import shutil
+
+import torch
+import torch.optim as optim
+from torchvision import models
 
 from src.app.generator import Generator
 from src.app.discriminator import Discriminator
@@ -11,12 +12,28 @@ from src.app.training import train_model
 from src.app.utils import print_datetime, check_if_gpu_available, check_if_set_seed, create_next_version_directory, weights_init, dataloader, load_checkpoint, plot_losses
 
 
-def main(path_data, path_dataset, path_train_params):
+def safe_copy(src, dest_path):
+    dest_dir, filename = os.path.split(dest_path)
+
+    if not os.path.exists(dest_dir):
+        os.makedirs(dest_dir)
+
+    if os.path.exists(dest_path):
+        base_name, ext = os.path.splitext(filename)
+        counter = 1
+
+        while os.path.exists(os.path.join(dest_dir, f"{base_name}_{counter}{ext}")):
+            counter += 1
+
+        dest_path = os.path.join(dest_dir, f"{base_name}_{counter}{ext}")
+
+    shutil.copy(src, dest_path)
+    return dest_path
+
+
+def main(params, path_data, path_dataset, path_train_params):
     time_start = time.time()
     print_datetime()
-
-    with open(path_train_params, 'r') as f:
-        params = json.load(f)
 
     check_if_gpu_available()
     check_if_set_seed(params["seed"])
@@ -25,6 +42,10 @@ def main(path_data, path_dataset, path_train_params):
     print(f'Image size: {params["image_size"]}x{params["image_size"]}\n')
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
+    # Frechet Inception Distance (FID)
+    inception_model = models.inception_v3(weights='Inception_V3_Weights.DEFAULT', transform_input=False, init_weights=False).to(device)
+    inception_model = inception_model.eval()
 
     generator = Generator(params["z_dim"], params["channels_img"], params["features_g"], img_size=params['image_size']).to(device)
     generator.apply(weights_init)
@@ -43,11 +64,12 @@ def main(path_data, path_dataset, path_train_params):
     print('Training version:', training_version)
 
     # Create a copy of parameters in training version folder
-    shutil.copy(path_train_params, os.path.join(data_dir, path_train_params.split('/')[-1]))
+    safe_copy(path_train_params, os.path.join(data_dir, path_train_params.split('/')[-1]))
 
     last_epoch, losses_g, losses_d = load_checkpoint(os.path.join(data_dir, 'weights', 'checkpoint.pth'), generator, discriminator, optim_g, optim_d)
 
     losses_g, losses_d = train_model(
+        inception_model=inception_model,
         generator=generator,
         discriminator=discriminator,
         weights_path= os.path.join(data_dir, 'weights'),
@@ -59,6 +81,7 @@ def main(path_data, path_dataset, path_train_params):
         data_loader=data_loader,
         device=device,
         z_dim=params["z_dim"],
+        lambda_gp=params["lambda_gp"],
         num_epochs=params["num_epochs"],
         last_epoch=last_epoch,
         save_model_at=params['save_model_at'],
