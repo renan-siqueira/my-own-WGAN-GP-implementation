@@ -1,7 +1,9 @@
 import datetime
+import time
+
+import numpy as np
 import torch
 import torchvision.utils as vutils
-import numpy as np
 
 from torch.autograd import Variable, grad
 from tqdm import tqdm
@@ -85,6 +87,8 @@ def train_model(
     fixed_noise = Variable(torch.randn(sample_size, z_dim, 1, 1)).to(device)
     
     for epoch in range(last_epoch, num_epochs + 1):
+        start_time = time.time()
+
         pbar = tqdm(enumerate(data_loader), total=len(data_loader))
         for i, data in pbar:
             images, _ = data
@@ -126,7 +130,9 @@ def train_model(
 
             pbar.set_description(f'Epoch {epoch}/{num_epochs}, g_loss: {g_loss.data}, d_loss: {d_loss.data}')
         
-        log_progresso(f"{log_dir}/trainning.log", f'Epoch {epoch}/{num_epochs}, g_loss: {g_loss.data}, d_loss: {d_loss.data}, FID: {fid_score}')
+        end_time = time.time()
+        epoch_duration = end_time - start_time
+        log_progresso(f"{log_dir}/trainning.log", f'Epoch {epoch}/{num_epochs}, g_loss: {g_loss.data}, d_loss: {d_loss.data}, FID: {fid_score}, Time: {epoch_duration:.2f} seconds')
 
         losses_g.append(g_loss.data.cpu())
         losses_d.append(d_loss.data.cpu())
