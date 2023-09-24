@@ -17,12 +17,16 @@ The architecture chosen for this project was WGAN-GP.
 
 # How to Use This Project
 
+---
+
 ## 1. Cloning the Repository:
 
 To clone this repository, use the following command:
 ```bash
 $ git clone https://github.com/renan-siqueira/my-own-gan-implementation.git
 ```
+
+---
 
 ## 2. Creating and activating the virtual environment:
 
@@ -46,6 +50,8 @@ To activate the virtual environment:
 $ source virtual_environment_name/bin/activate
 ```
 
+---
+
 ## 3. Installing the dependencies:
 
 __Windows / Linux / Mac:__
@@ -53,60 +59,11 @@ __Windows / Linux / Mac:__
 $ pip install -r requirements.txt
 ```
 
-## 4. Preparing the dataset:
+---
 
-- 1. Create a folder named `dataset` at the project root.
-- 2. Inside the "dataset" folder, create another folder with a name of your choice for the labels.
-- 3. Copy all the images you wish to use for training into this folder.
-
-## 5. Configuring training parameters:
-
-The `parameters.json` file is set up with optimized parameters for this type of architecture. However, feel free to modify it according to your needs.
-
-## 6. How to train the model:
-
-Run the following command:
+*__If you have a GPU, follow the steps in the "How to Use GPU" section (below). Otherwise, if you're not using a GPU, install PyTorch with the following command:__*
 ```bash
-$ python main.py
-```
-
-## 7. Monitoring the Training:
-
-- You can follow the progress directly in the terminal or console.
-- A log file will be generated in the directory specified in the `parameters.json` file.
-- At the end of each epoch, samples of generated images will be saved in the configured directory, inside the `samples` folder.
-
-## 8. How to generate images after completing the training (Beta version):
-
-Open the `generate.py` file, locate the portion of the code that calls the `main` function (end of the file), and modify the variables to reflect your scenario:
-```python
-    train_version = 'v1' # Set the version you wish to use to generate the images
-    output_directory = f'images_generated/{train_version}/' # Only change the beginning of the path to a folder where you wish to save the images
-    num_samples = 4 # Number of images you want to generate
-
-```
-
-Execute this file with command:
-```bash
-$ python generate.py
-```
-
-## 9. How to generate a video through interpolation of the generated images (Beta version):
-
-Open the `interpolate.py` file, locate the portion of the code that calls the `main` function (end of the file), and modify the variables to reflect your scenario:
-```python
-    train_version = 'v1' # Set the version you wish to use to generate the images
-
-    interpolate_points = 10 # Specify how many images you wish to interpolate
-    steps_between = 30 # Specify how many images you wish to generate between each interpolation
-    fps = 30 # Specify how many frames per second the video should have
-
-    video_name = 'video.avi' # Specify the name of the output video (keep the .avi extension)
-```
-
-Execute this file with command:
-```bash
-$ python interpolate.py
+$ pip install torch torchvision torchaudio
 ```
 
 ---
@@ -124,3 +81,71 @@ $ pip install --pre torch torchvision torchaudio --index-url https://download.py
 ```
 
 *__Note: Make sure your hardware and operating system are compatible with CUDA 12+.__*
+
+---
+
+## 4. Preparing the dataset:
+
+- 1. Create a folder named `dataset` inside the `src` folder.
+- 2. Inside the `dataset` folder, create another folder with a name of your choice for the labels.
+- 3. Copy all the images you wish to use for training into this folder.
+
+---
+
+## 5. Configuring training parameters:
+
+The `src/json/training_params.json` file is set up with optimized parameters for this type of architecture. However, feel free to modify it according to your needs.
+
+---
+
+## 6. How to use the main script:
+
+The `run.py` script is now your central point for executing various operations. It has been set up to accept arguments to dictate its behavior. Here's how to use it:
+
+### Training the model:
+
+To train the model, execute the following command:
+```bash
+$ python run.py --training
+```
+
+---
+
+## 7. Monitoring the Training:
+
+- You can follow the progress directly in the terminal or console.
+- A log file will be generated in the directory specified version training.
+- At the end of each epoch, samples of generated images will be saved in the folder of version training, inside the `samples` folder.
+
+---
+
+## 8. How to generate images after completing the training (Beta version):
+
+To generate images after completing the training, execute:
+```bash
+$ python run.py --image
+```
+
+*You can adjust the parameters for image generation in the configuration file at `settings.PATH_IMAGE_PARAMS`.*
+
+---
+
+## 9. How to generate a video through interpolation of the generated images (Beta version):
+
+To generate a video through interpolation of the generated images, execute:
+```bash
+$ python run.py --video
+```
+
+*Adjust the parameters for video generation in the configuration file located at settings.PATH_VIDEO_PARAMS.*
+
+---
+
+## 10. Upscaling:
+
+If you want to upscale the generated __images__ or __video__, use the `--upscale` argument followed by the width value:
+```bash
+$ python run.py --image --upscale 1024
+```
+
+*Replace `--image` with `--video` if you're generating a video. The above command will upscale the images to a width of 1024 pixels. Adjust as needed.*
