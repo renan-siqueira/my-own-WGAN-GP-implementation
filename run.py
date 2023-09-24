@@ -3,7 +3,7 @@ import argparse
 import os
 
 from src.config import settings
-from src.modules import copy_files_to_dataset, run_training, image_generate, video_generate
+from src.modules import run_training, image_generate, video_generate
 
 
 def get_params(path_file):
@@ -13,11 +13,7 @@ def get_params(path_file):
     return params
 
 
-def main(args):
-    
-
-    if args.copy:
-        copy_files_to_dataset.main(settings.PATH_ORIGINAL_FILES, settings.PATH_DATASET, interval=1)
+def main(args):    
 
     if args.training:
         training_params = get_params(settings.PATH_TRAIN_PARAMS)
@@ -39,7 +35,6 @@ def main(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Script para treinar o gerador, gerar imagens e/ou vídeos a partir de um gerador treinado")
 
-    parser.add_argument('--copy', action='store_true', help='Se verdadeiro, copia arquivos para o dataset')
     parser.add_argument('--training', action='store_true', help='Se verdadeiro, executa o treinamento')
     parser.add_argument('--image', action='store_true', help='Se verdadeiro, gera imagens')
     parser.add_argument('--video', action='store_true', help='Se verdadeiro, gera vídeos')

@@ -25,6 +25,3 @@ sympy==1.11.1
 tqdm==4.66.1
 typing_extensions==4.4.0
 urllib3==1.26.13
-torch==2.2.0.dev20230920+cu121
-torchaudio==2.2.0.dev20230920+cu121
-torchvision==0.17.0.dev20230920+cu121
