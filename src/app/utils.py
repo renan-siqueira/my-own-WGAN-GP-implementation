@@ -1,9 +1,11 @@
 import os
+import shutil
+import datetime
+
 import torch
 import matplotlib.pyplot as plt
 import torch.nn as nn
 from torchvision import transforms, datasets
-import datetime
 
 
 def create_next_version_directory(base_dir, continue_last_training):
@@ -102,3 +104,22 @@ def plot_losses(losses_g, losses_d, save_plot_image):
     plt.legend()
     plt.savefig(save_plot_image, bbox_inches='tight')
     plt.show()
+
+
+def safe_copy(src, dest_path):
+    dest_dir, filename = os.path.split(dest_path)
+
+    if not os.path.exists(dest_dir):
+        os.makedirs(dest_dir)
+
+    if os.path.exists(dest_path):
+        base_name, ext = os.path.splitext(filename)
+        counter = 1
+
+        while os.path.exists(os.path.join(dest_dir, f"{base_name}_{counter}{ext}")):
+            counter += 1
+
+        dest_path = os.path.join(dest_dir, f"{base_name}_{counter}{ext}")
+
+    shutil.copy(src, dest_path)
+    return dest_path
