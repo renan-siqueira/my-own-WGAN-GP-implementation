@@ -1,6 +1,5 @@
 import time
 import os
-import shutil
 
 import torch
 import torch.optim as optim
@@ -9,26 +8,7 @@ from torchvision import models
 from src.app.generator import Generator
 from src.app.discriminator import Discriminator
 from src.app.training import train_model
-from src.app.utils import print_datetime, check_if_gpu_available, check_if_set_seed, create_next_version_directory, weights_init, dataloader, load_checkpoint, plot_losses
-
-
-def safe_copy(src, dest_path):
-    dest_dir, filename = os.path.split(dest_path)
-
-    if not os.path.exists(dest_dir):
-        os.makedirs(dest_dir)
-
-    if os.path.exists(dest_path):
-        base_name, ext = os.path.splitext(filename)
-        counter = 1
-
-        while os.path.exists(os.path.join(dest_dir, f"{base_name}_{counter}{ext}")):
-            counter += 1
-
-        dest_path = os.path.join(dest_dir, f"{base_name}_{counter}{ext}")
-
-    shutil.copy(src, dest_path)
-    return dest_path
+from src.app.utils import print_datetime, check_if_gpu_available, check_if_set_seed, create_next_version_directory, weights_init, dataloader, load_checkpoint, plot_losses, safe_copy
 
 
 def main(params, path_data, path_dataset, path_train_params):
