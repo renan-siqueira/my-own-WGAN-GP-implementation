@@ -23,7 +23,7 @@ The architecture chosen for this project was WGAN-GP.
 
 To clone this repository, use the following command:
 ```bash
-git clone https://github.com/renan-siqueira/my-own-gan-implementation.git
+git clone https://github.com/renan-siqueira/my-own-WGAN-GP-implementation.git
 ```
 
 ---
