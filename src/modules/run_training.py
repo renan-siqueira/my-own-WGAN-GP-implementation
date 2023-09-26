@@ -97,7 +97,3 @@ def main(params, path_data, path_dataset, path_train_params):
     print_datetime()
 
     plot_losses(losses_g, losses_d, save_plot_image=os.path.join(data_dir, f"{training_version}.jpg"))
-
-
-if __name__ == '__main__':
-    main()
