@@ -1,4 +1,4 @@
-# My Own GAN Implementation
+# My Own WGAN-GP Implementation
 
 My own GAN implementation with Pytorch.
 Adapted to utilize GPU if you have an NVIDIA graphics card.
