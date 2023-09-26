@@ -23,7 +23,7 @@ The architecture chosen for this project was WGAN-GP.
 
 To clone this repository, use the following command:
 ```bash
-$ git clone https://github.com/renan-siqueira/my-own-gan-implementation.git
+git clone https://github.com/renan-siqueira/my-own-gan-implementation.git
 ```
 
 ---
@@ -32,22 +32,22 @@ $ git clone https://github.com/renan-siqueira/my-own-gan-implementation.git
 
 __Windows:__
 ```bash
-$ python -m venv virtual_environment_name
+python -m venv virtual_environment_name
 ```
 
 To activate the virtual environment:
 ```bash
-$ virtual_environment_name\Scripts\activate
+virtual_environment_name\Scripts\activate
 ```
 
 __Linux/Mac:__
 ```bash
-$ python3 -m venv virtual_environment_name
+python3 -m venv virtual_environment_name
 ```
 
 To activate the virtual environment:
 ```bash
-$ source virtual_environment_name/bin/activate
+source virtual_environment_name/bin/activate
 ```
 
 ---
@@ -56,14 +56,14 @@ $ source virtual_environment_name/bin/activate
 
 __Windows / Linux / Mac:__
 ```bash
-$ pip install -r requirements.txt
+pip install -r requirements.txt
 ```
 
 ---
 
 *__If you have a GPU, follow the steps in the "How to Use GPU" section (below). Otherwise, if you're not using a GPU, install PyTorch with the following command:__*
 ```bash
-$ pip install torch torchvision torchaudio
+pip install torch torchvision torchaudio
 ```
 
 ---
@@ -77,7 +77,7 @@ After creating and activating your virtual environment:
 __Windows/Linux/Mac:__
 
 ```bash
-$ pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cu121
+pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cu121
 ```
 
 *__Note: Make sure your hardware and operating system are compatible with CUDA 12+.__*
@@ -106,7 +106,7 @@ The `run.py` script is now your central point for executing various operations. 
 
 To train the model, execute the following command:
 ```bash
-$ python run.py --training
+python run.py --training
 ```
 
 ---
@@ -123,7 +123,7 @@ $ python run.py --training
 
 To generate images after completing the training, execute:
 ```bash
-$ python run.py --image
+python run.py --image
 ```
 
 *You can adjust the parameters for image generation in the configuration file at `settings.PATH_IMAGE_PARAMS`.*
@@ -134,7 +134,7 @@ $ python run.py --image
 
 To generate a video through interpolation of the generated images, execute:
 ```bash
-$ python run.py --video
+python run.py --video
 ```
 
 *Adjust the parameters for video generation in the configuration file located at settings.PATH_VIDEO_PARAMS.*
@@ -145,7 +145,7 @@ $ python run.py --video
 
 If you want to upscale the generated __images__ or __video__, use the `--upscale` argument followed by the width value:
 ```bash
-$ python run.py --image --upscale 1024
+python run.py --image --upscale 1024
 ```
 
 *Replace `--image` with `--video` if you're generating a video. The above command will upscale the images to a width of 1024 pixels. Adjust as needed.*
