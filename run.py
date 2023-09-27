@@ -33,13 +33,13 @@ def main(args):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="Script para treinar o gerador, gerar imagens e/ou vídeos a partir de um gerador treinado")
+    parser = argparse.ArgumentParser(description="Script to train the generator, generate images and/or videos from a trained generator")
 
-    parser.add_argument('--training', action='store_true', help='Se verdadeiro, executa o treinamento')
-    parser.add_argument('--image', action='store_true', help='Se verdadeiro, gera imagens')
-    parser.add_argument('--video', action='store_true', help='Se verdadeiro, gera vídeos')
-    parser.add_argument('--upscale', type=int, default=None, help='Define a largura do upscale. Pode ser None ou um valor inteiro.')
+    parser.add_argument('--training', action='store_true', help='If true, executes the training')
+    parser.add_argument('--image', action='store_true', help='If true, generates images')
+    parser.add_argument('--video', action='store_true', help='If true, generates videos')
+    parser.add_argument('--upscale', type=int, default=None, help='Sets the upscale width. Can be None or an integer value.')
 
     args = parser.parse_args()
-    
+
     main(args)
