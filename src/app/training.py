@@ -85,7 +85,8 @@ def train_model(
     lambda_gp = 10  # Default value to WGAN-GP
 
     fixed_noise = Variable(torch.randn(sample_size, z_dim, 1, 1)).to(device)
-    
+    fid_score = 'Unavailable'
+
     for epoch in range(last_epoch, num_epochs + 1):
         start_time = time.time()
 
@@ -118,8 +119,9 @@ def train_model(
             fake_images = generator(z)
             real_images = images
             
-            # FID Test
-            fid_score = calculate_fid(real_images, fake_images, inception_model)
+            if inception_model:
+                # FID Test
+                fid_score = calculate_fid(real_images, fake_images, inception_model)
 
             outputs = discriminator(fake_images).squeeze()
             g_loss = -torch.mean(outputs)
