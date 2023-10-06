@@ -149,3 +149,15 @@ python run.py --image --upscale 1024
 ```
 
 *Replace `--image` with `--video` if you're generating a video. The above command will upscale the images to a width of 1024 pixels. Adjust as needed.*
+
+---
+
+## License
+
+This project is open-sourced and available to everyone under the [MIT License](LICENSE).
+
+---
+
+## Contributing
+
+Contributions are welcome! Feel free to open an issue or submit a pull request if you find any bugs or have suggestions for improvements.
