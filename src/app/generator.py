@@ -25,14 +25,16 @@ class SelfAttention(nn.Module):
         self.softmax = nn.Softmax(dim=-1)
 
     def forward(self, x):
-        _, C, H, W = x.size()
-        query = self.query(x).view(-1, H * W).permute(0, 2, 1)
-        key = self.key(x).view(-1, H * W)
-        value = self.value(x).view(-1, H * W)
+        batch_size, C, height, width = x.size()
+        
+        query = self.query(x).view(batch_size, -1, height * width).permute(0, 2, 1)
+        key = self.key(x).view(batch_size, -1, height * width)
+        value = self.value(x).view(batch_size, -1, height * width)
 
         attention = self.softmax(torch.bmm(query, key))
         out = torch.bmm(value, attention.permute(0, 2, 1))
-        out = out.view(-1, C, H, W)
+        
+        out = out.view(batch_size, C, height, width)
 
         return out + x
 
