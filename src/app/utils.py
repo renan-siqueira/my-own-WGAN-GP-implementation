@@ -51,7 +51,7 @@ def check_if_set_seed(seed=None):
         torch.manual_seed(seed)
         print(f'Using the Seed: {seed}')
     else:
-        print(f'Using random seed.')
+        print('Using random seed.')
 
 
 def dataloader(directory, image_size, batch_size):

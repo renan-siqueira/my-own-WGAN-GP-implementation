@@ -62,23 +62,23 @@ def gradient_penalty(discriminator, real_data, fake_data, device):
 
 def train_model(
         inception_model,
-        generator, 
-        discriminator, 
+        generator,
+        discriminator,
         weights_path,
-        n_critic, 
+        n_critic,
         sample_size,
         sample_dir,
-        optim_g, 
-        optim_d, 
-        data_loader, 
-        device, 
-        z_dim, 
+        optim_g,
+        optim_d,
+        data_loader,
+        device,
+        z_dim,
         lambda_gp,
-        num_epochs, 
+        num_epochs,
         last_epoch,
         save_model_at,
         log_dir,
-        losses_g=[], 
+        losses_g=[],
         losses_d=[]
     ):
 

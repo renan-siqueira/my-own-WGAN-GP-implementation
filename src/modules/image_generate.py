@@ -33,7 +33,16 @@ def tensor_to_PIL_image(img_tensor):
 
 
 def main(train_params, images_params, path_data, path_images_generated, upscale_width):
-    
+
+    seed_value = images_params.get("seed", None)
+
+    print('Use seed:', seed_value)
+
+    if seed_value:
+        torch.manual_seed(seed_value)
+        if torch.cuda.is_available():
+            torch.cuda.manual_seed_all(seed_value)
+
     num_samples = images_params['num_samples']
     output_directory = os.path.join(path_images_generated, images_params["train_version"])
 
@@ -61,7 +70,7 @@ def main(train_params, images_params, path_data, path_images_generated, upscale_
     for i in tqdm(range(num_samples)):
         individual_img = images[i].cpu().clamp(0, 1)
         img = tensor_to_PIL_image(individual_img)
-        image_size_str = f"{train_params['image_size']}x{train_params['image_size']}"
+        image_size_str = f"{train_params['image_size']}x{train_params['image_size']}_seed_{images_params['seed']}"
         
         if upscale_width:
             image_size_str = f"{upscale_width}x{upscale_width}"
