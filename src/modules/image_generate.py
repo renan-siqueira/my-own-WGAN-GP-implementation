@@ -32,7 +32,7 @@ def tensor_to_PIL_image(img_tensor):
     img_array = (img_array * 255).round().astype(np.uint8)
 
     # Post processing
-    img_array = cv2.GaussianBlur(img_array, (5, 5), 0)
+    img_array = cv2.GaussianBlur(img_array, (5, 5), 0) 
 
     return Image.fromarray(img_array)
 
