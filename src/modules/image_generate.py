@@ -1,9 +1,9 @@
 import os
-import numpy as np
 
+import numpy as np
 import torch
 import torchvision.utils as vutils
-
+import cv2
 from PIL import Image
 from tqdm import tqdm
 
@@ -29,6 +29,10 @@ def tensor_to_PIL_image(img_tensor):
     img_array = img_tensor.clone().detach().cpu().numpy()
     img_array = img_array.transpose(1, 2, 0)
     img_array = (img_array * 255).round().astype(np.uint8)
+
+    # Post processing
+    img_array = cv2.GaussianBlur(img_array, (5, 5), 0)
+
     return Image.fromarray(img_array)
 
 

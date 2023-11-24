@@ -92,6 +92,9 @@ def main(train_params, video_params, path_data, path_videos_generated, upscale_w
         if upscale_width:
             frame = process_and_resize_image(frame, new_width=upscale_width)
 
+        # Post processing
+        frame = cv2.GaussianBlur(frame, (5, 5), 0)
+
         frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
         out.write(frame)
 
