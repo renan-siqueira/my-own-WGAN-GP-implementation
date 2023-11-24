@@ -55,10 +55,9 @@ class Generator(nn.Module):
             out_channels = in_channels // 2
             layers.append(self._block(in_channels, out_channels, 4, 2, 1))
             
-            if i == num_blocks // 2:  # Adiciona a camada de atenção na metade do gerador
+            if i == num_blocks // 2:
                 layers.append(SelfAttention(out_channels))
             
-            # Adiciona camada residual em cada bloco
             layers.append(ResidualBlock(out_channels))
 
         layers.append(nn.ConvTranspose2d(out_channels, channels_img, 4, 2, 1))
