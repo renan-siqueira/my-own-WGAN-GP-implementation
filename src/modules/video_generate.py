@@ -41,6 +41,14 @@ def multi_interpolate(generator, z_list, steps_between):
 
 def main(train_params, video_params, path_data, path_videos_generated, upscale_width):
 
+    seed_value = video_params.get("seed", None)
+    print('Use seed:', seed_value)
+
+    if seed_value:
+        torch.manual_seed(seed_value)
+        if torch.cuda.is_available():
+            torch.cuda.manual_seed_all(seed_value)
+
     output_directory = os.path.join(path_videos_generated, video_params['train_version'])
 
     check_if_gpu_available()
@@ -66,9 +74,12 @@ def main(train_params, video_params, path_data, path_videos_generated, upscale_w
         frame_size = (train_params["image_size"], train_params["image_size"])
 
     out = cv2.VideoWriter(
-        os.path.join(output_directory, f'video_{frame_size[0]}x{frame_size[1]}_{video_params["fps"]}fps.mp4'), 
-        cv2.VideoWriter_fourcc(*'mp4v'), 
-        video_params["fps"], 
+        os.path.join(
+            output_directory,
+            f'video_{frame_size[0]}x{frame_size[1]}_{video_params["fps"]}fps_{video_params["steps_between"]}steps_between_{video_params["interpolate_points"]}_interpolate_points_seed_{video_params["seed"]}.mp4'
+        ),
+        cv2.VideoWriter_fourcc(*'mp4v'),
+        video_params["fps"],
         frame_size
     )
 

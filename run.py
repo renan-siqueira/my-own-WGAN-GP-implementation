@@ -13,7 +13,7 @@ def get_params(path_file):
     return params
 
 
-def main(args):    
+def main(args):
 
     if args.training:
         training_params = get_params(settings.PATH_TRAIN_PARAMS)
