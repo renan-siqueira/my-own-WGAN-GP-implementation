@@ -88,7 +88,7 @@ def main(train_params, images_params, path_data, path_images_generated, upscale_
 
     print("Saving image grid...")
     grid_img = vutils.make_grid(images, nrow=int(num_samples**0.5), padding=2, normalize=True)
-    img_grid = tensor_to_PIL_image(grid_img.cpu())
+    img_grid = tensor_to_PIL_image(grid_img.cpu(), images_params['post_processing'])
 
     if upscale_width:
         img_grid = np.asarray(img_grid)
