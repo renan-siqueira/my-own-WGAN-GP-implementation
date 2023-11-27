@@ -5,6 +5,7 @@ import numpy as np
 import torch
 import torchvision.utils as vutils
 
+from torchvision import transforms
 from torch.autograd import Variable, grad
 from tqdm import tqdm
 
@@ -30,12 +31,17 @@ def save_checkpoint(epoch, generator, discriminator, optim_g, optim_d, losses_g,
 
 
 def calculate_fid(images_real, images_fake, inception_model):
-    real_features = inception_model(images_real).detach().cpu().numpy()
-    fake_features = inception_model(images_fake).detach().cpu().numpy()
+    transform = transforms.Resize((128, 128))
+
+    images_real_resized = torch.stack([transform(image) for image in images_real])
+    images_fake_resized = torch.stack([transform(image) for image in images_fake])
+
+    real_features = inception_model(images_real_resized).detach().cpu().numpy()
+    fake_features = inception_model(images_fake_resized).detach().cpu().numpy()
 
     mu_real, sigma_real = real_features.mean(axis=0), np.cov(real_features, rowvar=False)
     mu_fake, sigma_fake = fake_features.mean(axis=0), np.cov(fake_features, rowvar=False)
-    
+
     diff_mu = mu_real - mu_fake
     cov_mean = (sigma_real + sigma_fake) / 2
     fid = diff_mu.dot(diff_mu) + np.trace(sigma_real + sigma_fake - 2*np.sqrt(cov_mean))
@@ -140,8 +146,9 @@ def train_model(
         losses_d.append(d_loss.data.cpu())
 
         vutils.save_image(generator(fixed_noise).data, sample_dir + '/fake_samples_epoch_%06d.jpeg' % (epoch), normalize=True)
+        save_checkpoint(epoch, generator, discriminator, optim_g, optim_d, losses_g, losses_d, f"{weights_path}/checkpoint.pth")
 
         if (epoch) % save_model_at == 0:
-            save_checkpoint(epoch, generator, discriminator, optim_g, optim_d, losses_g, losses_d, f"{weights_path}/checkpoint.pth")
+            save_checkpoint(epoch, generator, discriminator, optim_g, optim_d, losses_g, losses_d, f"{weights_path}/checkpoint_epoch_{epoch}.pth")
 
     return losses_g, losses_d
