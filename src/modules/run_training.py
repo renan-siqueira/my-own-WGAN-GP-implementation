@@ -23,11 +23,8 @@ def main(params, path_data, path_dataset, path_train_params):
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-    inception_model = None
-    if params['image_size'] == 128:
-        # Frechet Inception Distance (FID)
-        inception_model = models.inception_v3(weights='Inception_V3_Weights.DEFAULT', transform_input=False, init_weights=False).to(device)
-        inception_model = inception_model.eval()
+    inception_model = models.inception_v3(weights='Inception_V3_Weights.DEFAULT', transform_input=False, init_weights=False).to(device)
+    inception_model = inception_model.eval()
 
     generator = Generator(params["z_dim"], params["channels_img"], params["features_g"], img_size=params['image_size']).to(device)
     generator.apply(weights_init)
@@ -36,11 +33,12 @@ def main(params, path_data, path_dataset, path_train_params):
     discriminator.apply(weights_init)
 
     data_loader = dataloader(path_dataset, params["image_size"], params["batch_size"])
+    print('Dataset:', path_dataset.replace('\\', '/'))
 
     optim_g = optim.Adam(generator.parameters(), lr=params["lr_g"], betas=(params['g_beta_min'], params['g_beta_max']))
     optim_d = optim.Adam(discriminator.parameters(), lr=params["lr_d"], betas=(params['d_beta_min'], params['d_beta_max']))
 
-    training_version = create_next_version_directory(path_data, params['continue_last_training'])
+    training_version = create_next_version_directory(path_data, params['continue_last_training'], params['train_version'])
 
     data_dir = os.path.join(path_data, training_version)
     print('Training version:', training_version)

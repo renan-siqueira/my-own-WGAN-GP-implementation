@@ -4,6 +4,9 @@ __pycache__
 dataset*
 data
 generated
+best_models
+explore_latent
+interative
 
 settings.py
 
