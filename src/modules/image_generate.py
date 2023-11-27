@@ -25,7 +25,10 @@ def generate_images(model, latent_dimension, num_samples, device):
     return images
 
 
-def tensor_to_PIL_image(img_tensor, post_processing):
+def tensor_to_PIL_image(img_tensor, post_processing, explore_mode=False):
+    if explore_mode:
+            img_tensor = (img_tensor + 1) / 2
+
     img_array = img_tensor.clone().detach().cpu().numpy()
     img_array = img_array.transpose(1, 2, 0)
     img_array = (img_array * 255).round().astype(np.uint8)
