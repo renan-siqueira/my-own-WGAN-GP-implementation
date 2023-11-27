@@ -14,7 +14,7 @@ matplotlib==3.8.0
 mpmath==1.2.1
 networkx==3.0rc1
 numpy==1.24.1
-opencv-python-headless==4.8.0.76
+opencv-python @ file:///C:/Users/Meu%20Computador/Desktop/projetos/01-Github-Projects/gan/my-own-WGAN-GP-implementation/opencv_python-4.5.5-cp311-cp311-win_amd64.whl#sha256=2eb7493df8b08951e8268accb5d4e91e5089e3a74949b101a5df441a1bb7f09d
 packaging==23.1
 Pillow==9.3.0
 pyparsing==3.1.1
@@ -22,6 +22,9 @@ python-dateutil==2.8.2
 requests==2.28.1
 six==1.16.0
 sympy==1.11.1
+torch==2.2.0.dev20231110+cu121
+torchaudio==2.2.0.dev20231110+cu121
+torchvision==0.17.0.dev20231110+cu121
 tqdm==4.66.1
 typing_extensions==4.4.0
 urllib3==1.26.13
