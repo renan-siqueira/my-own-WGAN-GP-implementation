@@ -25,13 +25,17 @@ def generate_images(model, latent_dimension, num_samples, device):
     return images
 
 
-def tensor_to_PIL_image(img_tensor):
+def tensor_to_PIL_image(img_tensor, post_processing, explore_mode=False):
+    if explore_mode:
+            img_tensor = (img_tensor + 1) / 2
+
     img_array = img_tensor.clone().detach().cpu().numpy()
     img_array = img_array.transpose(1, 2, 0)
     img_array = (img_array * 255).round().astype(np.uint8)
 
     # Post processing
-    img_array = cv2.GaussianBlur(img_array, (5, 5), 0)
+    if post_processing:
+        img_array = cv2.GaussianBlur(img_array, (5, 5), 0)
 
     return Image.fromarray(img_array)
 
@@ -73,7 +77,7 @@ def main(train_params, images_params, path_data, path_images_generated, upscale_
     print("Saving individual images...")
     for i in tqdm(range(num_samples)):
         individual_img = images[i].cpu().clamp(0, 1)
-        img = tensor_to_PIL_image(individual_img)
+        img = tensor_to_PIL_image(individual_img, images_params['post_processing'])
         image_size_str = f"{train_params['image_size']}x{train_params['image_size']}_seed_{images_params['seed']}"
         
         if upscale_width:
@@ -87,7 +91,7 @@ def main(train_params, images_params, path_data, path_images_generated, upscale_
 
     print("Saving image grid...")
     grid_img = vutils.make_grid(images, nrow=int(num_samples**0.5), padding=2, normalize=True)
-    img_grid = tensor_to_PIL_image(grid_img.cpu())
+    img_grid = tensor_to_PIL_image(grid_img.cpu(), images_params['post_processing'])
 
     if upscale_width:
         img_grid = np.asarray(img_grid)

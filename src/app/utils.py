@@ -1,4 +1,5 @@
 import os
+import json
 import shutil
 import datetime
 
@@ -8,7 +9,17 @@ import torch.nn as nn
 from torchvision import transforms, datasets
 
 
-def create_next_version_directory(base_dir, continue_last_training):
+def get_params(path_file):
+    with open(path_file, 'r', encoding='utf-8') as f:
+        params = json.load(f)
+
+    return params
+
+
+def create_next_version_directory(base_dir, continue_last_training, training_version):
+    if training_version:
+        return training_version
+    
     versions = [d for d in os.listdir(base_dir) if d.startswith('v') and os.path.isdir(os.path.join(base_dir, d))]
 
     if not versions:
@@ -74,22 +85,28 @@ def weights_init(m):
         nn.init.constant_(m.bias.data, 0)
         
 
-def load_checkpoint(path, generator, discriminator, optim_g, optim_d):
+def load_checkpoint(path, generator, discriminator=None, optim_g=None, optim_d=None):
     if not os.path.exists(path):
         print("No checkpoint found.")
         return 1, [], []
 
     checkpoint = torch.load(path)
-    
+
     generator.load_state_dict(checkpoint['generator_state_dict'])
-    discriminator.load_state_dict(checkpoint['discriminator_state_dict'])
-    optim_g.load_state_dict(checkpoint['optimizer_g_state_dict'])
-    optim_d.load_state_dict(checkpoint['optimizer_d_state_dict'])
-    
+
+    if discriminator:
+        discriminator.load_state_dict(checkpoint['discriminator_state_dict'])
+
+    if optim_g:
+        optim_g.load_state_dict(checkpoint['optimizer_g_state_dict'])
+
+    if optim_d:
+        optim_d.load_state_dict(checkpoint['optimizer_d_state_dict'])
+
     epoch = checkpoint['epoch'] + 1
     losses_g = checkpoint['losses_g']
     losses_d = checkpoint['losses_d']
-    
+
     print(f'Checkpoint loaded, starting from epoch {epoch}')
     return epoch, losses_g, losses_d
 

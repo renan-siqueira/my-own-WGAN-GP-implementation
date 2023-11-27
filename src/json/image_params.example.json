@@ -1,4 +1,6 @@
 {
     "train_version": "v1",
-    "num_samples": 4
+    "num_samples": 8,
+    "seed": 1,
+    "post_processing": false
 }

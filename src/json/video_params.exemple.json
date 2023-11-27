@@ -1,6 +1,8 @@
 {
     "train_version": "v1",
-    "interpolate_points": 10,
+    "interpolate_points": 8,
     "steps_between": 30,
-    "fps": 30
+    "fps": 30,
+    "seed": 1,
+    "post_processing": false
 }

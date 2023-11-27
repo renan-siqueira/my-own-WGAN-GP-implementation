@@ -39,6 +39,24 @@ def multi_interpolate(generator, z_list, steps_between):
     return generated_images
 
 
+def generate_latent_vectors(z_dim, device, points, num_variations=1, step=0.1):
+    latent_vectors = []
+
+    if points is None or len(points) == 0:
+        points = list(range(z_dim))
+
+    for point in points:
+        torch.manual_seed(point)
+        base_vector = torch.randn(1, z_dim, device=device)
+
+        for i in range(num_variations):
+            modified_vector = base_vector.clone()
+            modified_vector[0, point % z_dim] += i * step
+            latent_vectors.append(modified_vector)
+
+    return latent_vectors
+
+
 def main(train_params, video_params, path_data, path_videos_generated, upscale_width):
 
     seed_value = video_params.get("seed", None)
@@ -62,6 +80,9 @@ def main(train_params, video_params, path_data, path_videos_generated, upscale_w
     generator.eval()
 
     z_points = [torch.randn(1, train_params["z_dim"]).to(device) for _ in range(video_params['interpolate_points'])]
+
+    # z_points = generate_latent_vectors(train_params["z_dim"], device, points=[54,58,54,30,54], num_variations=1, step=0.1)
+
 
     print("Generating interpolated images...")
     generated_images = multi_interpolate(generator, z_points, video_params['steps_between'])
@@ -93,9 +114,11 @@ def main(train_params, video_params, path_data, path_videos_generated, upscale_w
             frame = process_and_resize_image(frame, new_width=upscale_width)
         
         # Post processing
-        frame = cv2.GaussianBlur(frame, (5, 5), 0)
-        
+        if video_params['post_processing']:
+            frame = cv2.GaussianBlur(frame, (5, 5), 0)
+
         frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
         out.write(frame)
+    print(f"Video saved to {output_directory}")
 
     out.release()
