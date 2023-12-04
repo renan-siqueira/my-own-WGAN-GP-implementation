@@ -1,6 +1,8 @@
 import os
 import time
 import threading
+from concurrent.futures import ThreadPoolExecutor
+
 import random
 
 import torch
@@ -21,7 +23,8 @@ generator = None
 wait_generated_images = None
 upscale = None
 post_processing = None
-window_size = (256, 256)
+window_size = (320, 320)
+
 
 def get_points_for_command(command):
     global params
@@ -125,27 +128,27 @@ def configure():
 def main():
     configure()
 
-    stop_event = threading.Event()
+    with ThreadPoolExecutor(max_workers=2) as executor:
+        stop_event = threading.Event()
 
-    while True:
-        stop_event.clear()
-        video_thread = threading.Thread(target=play_video, args=(wait_generated_images, stop_event))
-        video_thread.start()
+        while True:
+            stop_event.clear()
+            future = executor.submit(play_video, wait_generated_images, stop_event)
 
-        command = input("Digite um comando: ")
+            command = input("Digite um comando: ")
 
-        if command and command != "esperar":
-            stop_event.set()
-            video_thread.join()
+            if command and command != "esperar":
+                stop_event.set()
+                future.result()
 
-            points = get_points_for_command(command)
-            z_points = video_generate.generate_latent_vectors(training_params["z_dim"], device, points)
-            generated_images = video_generate.multi_interpolate(generator, z_points, params['steps_between'])
+                points = get_points_for_command(command)
+                z_points = video_generate.generate_latent_vectors(training_params["z_dim"], device, points)
+                generated_images = video_generate.multi_interpolate(generator, z_points, params['steps_between'])
 
-            command_stop_event = threading.Event()
-            threading.Thread(target=play_video, args=(generated_images, command_stop_event)).start()
-            time.sleep(3)
-            command_stop_event.set()
+                command_stop_event = threading.Event()
+                executor.submit(play_video, generated_images, command_stop_event)
+                time.sleep(3)
+                command_stop_event.set()
 
 
 if __name__ == "__main__":

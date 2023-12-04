@@ -83,7 +83,7 @@ def main(train_params, images_params, path_data, path_images_generated, upscale_
         if upscale_width:
             image_size_str = f"{upscale_width}x{upscale_width}"
             img = np.asarray(img)
-            img = process_and_resize_image(img, new_width=upscale_width)
+            img = process_and_resize_image(img, new_width=upscale_width, apply_filter=images_params["apply_filter"])
             img = Image.fromarray(img)
 
         img_path = os.path.join(output_directory, f'image_{image_size_str}_{i}.jpg')
@@ -95,7 +95,7 @@ def main(train_params, images_params, path_data, path_images_generated, upscale_
 
     if upscale_width:
         img_grid = np.asarray(img_grid)
-        img_grid = process_and_resize_image(img_grid, new_width=upscale_width)
+        img_grid = process_and_resize_image(img_grid, new_width=upscale_width, apply_filter=images_params["apply_filter"])
         img_grid = Image.fromarray(img_grid)
 
     img_grid_path = os.path.join(output_directory, f'grid_{image_size_str}.jpg')

@@ -111,7 +111,7 @@ def main(train_params, video_params, path_data, path_videos_generated, upscale_w
         frame = (image_np * 255).astype(np.uint8)
         
         if upscale_width:
-            frame = process_and_resize_image(frame, new_width=upscale_width)
+            frame = process_and_resize_image(frame, new_width=upscale_width, apply_filter=video_params["apply_filter"])
         
         # Post processing
         if video_params['post_processing']:

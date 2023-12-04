@@ -88,8 +88,6 @@ def train_model(
         losses_d=[]
     ):
 
-    lambda_gp = 10  # Default value to WGAN-GP
-
     fixed_noise = Variable(torch.randn(sample_size, z_dim, 1, 1)).to(device)
     fid_score = 'Unavailable'
 
