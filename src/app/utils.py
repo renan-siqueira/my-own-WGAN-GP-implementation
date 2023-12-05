@@ -7,6 +7,7 @@ import torch
 import matplotlib.pyplot as plt
 import torch.nn as nn
 from torchvision import transforms, datasets
+from torchvision.transforms import Grayscale
 
 
 def get_params(path_file):
@@ -65,12 +66,18 @@ def check_if_set_seed(seed=None):
         print('Using random seed.')
 
 
-def dataloader(directory, image_size, batch_size):
-    transform = transforms.Compose([
-        transforms.Resize((image_size, image_size)),
-        transforms.ToTensor(),
-        transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
-    ])
+def dataloader(directory, image_size, batch_size, channels_img):
+    transform_list = [transforms.Resize((image_size, image_size))]
+    
+    if channels_img == 1:
+        transform_list.append(Grayscale(num_output_channels=1))
+        normalize = transforms.Normalize((0.5,), (0.5,))
+    else:
+        normalize = transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+    
+    transform_list.extend([transforms.ToTensor(), normalize])
+    transform = transforms.Compose(transform_list)
+    
     dataset = datasets.ImageFolder(directory, transform=transform)
     loader = torch.utils.data.DataLoader(dataset, batch_size=batch_size, shuffle=True)
     return loader
