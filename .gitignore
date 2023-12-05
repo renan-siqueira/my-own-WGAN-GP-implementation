@@ -14,6 +14,7 @@ main_params.json
 training_params.json
 image_params.json
 video_params.json
+create_video_from_folder.json
 
 *.png
 *.jpg
