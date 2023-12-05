@@ -61,7 +61,13 @@ if __name__ == '__main__':
     path_data_training = os.path.join(settings.PATH_DATA, params['train_version'])
 
     path_data_version_weights = os.path.join(path_data_training, settings.PATH_INSIDE_DATA_WEIGHTS)
-    checkpoint_files = [f for f in os.listdir(path_data_version_weights) if f.startswith("checkpoint_epoch") and f.endswith(".pth")]
+
+    specified_checkpoint = params.get('checkpoint_file', None)
+
+    if specified_checkpoint:
+        checkpoint_files = [specified_checkpoint]
+    else:
+        checkpoint_files = [f for f in os.listdir(path_data_version_weights) if f.startswith("checkpoint_epoch") and f.endswith(".pth")]
 
     for checkpoint_file in checkpoint_files:
         checkpoint_path = os.path.join(path_data_version_weights, checkpoint_file)
