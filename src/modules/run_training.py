@@ -32,7 +32,7 @@ def main(params, path_data, path_dataset, path_train_params):
     discriminator = Discriminator(params["channels_img"], params["features_d"], params["alpha"], img_size=params['image_size']).to(device)
     discriminator.apply(weights_init)
 
-    data_loader = dataloader(path_dataset, params["image_size"], params["batch_size"])
+    data_loader = dataloader(path_dataset, params["image_size"], params["batch_size"], params["channels_img"])
     print('Dataset:', path_dataset.replace('\\', '/'))
 
     optim_g = optim.Adam(generator.parameters(), lr=params["lr_g"], betas=(params['g_beta_min'], params['g_beta_max']))
@@ -66,6 +66,7 @@ def main(params, path_data, path_dataset, path_train_params):
         last_epoch=last_epoch,
         save_model_at=params['save_model_at'],
         log_dir = os.path.join(data_dir, 'log'),
+        channels_img=params["channels_img"],
         losses_g=losses_g,
         losses_d=losses_d,
     )
