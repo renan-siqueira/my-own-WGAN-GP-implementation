@@ -1,0 +1,5 @@
+{
+    "input_folder": "__path_to_images_folder__",
+    "output_file": "__video_name__",
+    "frame_rate": 30.0
+}
