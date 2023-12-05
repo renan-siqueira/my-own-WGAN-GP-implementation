@@ -30,7 +30,11 @@ def save_checkpoint(epoch, generator, discriminator, optim_g, optim_d, losses_g,
     }, path)
 
 
-def calculate_fid(images_real, images_fake, inception_model):
+def calculate_fid(images_real, images_fake, inception_model, channels_img):
+    if channels_img == 1:
+        images_real = images_real.repeat(1, 3, 1, 1)
+        images_fake = images_fake.repeat(1, 3, 1, 1)
+
     transform = transforms.Resize((128, 128))
 
     images_real_resized = torch.stack([transform(image) for image in images_real])
@@ -84,8 +88,9 @@ def train_model(
         last_epoch,
         save_model_at,
         log_dir,
+        channels_img,
         losses_g=[],
-        losses_d=[]
+        losses_d=[],
     ):
 
     fixed_noise = Variable(torch.randn(sample_size, z_dim, 1, 1)).to(device)
@@ -125,7 +130,7 @@ def train_model(
             
             if inception_model:
                 # FID Test
-                fid_score = calculate_fid(real_images, fake_images, inception_model)
+                fid_score = calculate_fid(real_images, fake_images, inception_model, channels_img)
 
             outputs = discriminator(fake_images).squeeze()
             g_loss = -torch.mean(outputs)
