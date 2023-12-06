@@ -57,7 +57,10 @@ def main(train_params, images_params, path_data, path_images_generated, upscale_
     check_if_gpu_available()
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-    checkpoint_path = f'{path_data}/{images_params["train_version"]}/weights/checkpoint.pth'
+    checkpoint_epoch = f'_epoch_{images_params["checkpoint_epoch"]}' if images_params['checkpoint_epoch'] else ''
+    checkpoint_path = f'{path_data}/{images_params["train_version"]}/weights/checkpoint{checkpoint_epoch}.pth'
+
+    print("Checkpoint selected:", checkpoint_path)
 
     checkpoint = torch.load(checkpoint_path)
 
