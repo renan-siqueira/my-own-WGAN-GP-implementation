@@ -147,3 +147,24 @@ def safe_copy(src, dest_path):
 
     shutil.copy(src, dest_path)
     return dest_path
+
+def generate_video_filename(params, frame_size):
+
+    video_name_parts = [
+        f'video_{frame_size}x{frame_size}',
+        f'-{params["fps"]}_fps',
+        f'-{params["steps_between"]}_steps_between',
+        f'-{params["interpolate_points"]}_interpolate_points',
+        f'-seed_{params["seed"]}',
+    ]
+
+    if params["checkpoint_epoch"]:
+        video_name_parts.append(f'checkpoint_epoch_{params["checkpoint_epoch"]}')
+
+    if params["apply_filter"]:
+        video_name_parts.append('-apply_filter')
+
+    if params["post_processing"]:
+        video_name_parts.append('-post_processing')
+
+    return ''.join(video_name_parts) + '.mp4'

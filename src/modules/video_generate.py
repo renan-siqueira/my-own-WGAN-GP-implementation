@@ -5,7 +5,7 @@ import cv2
 from tqdm import tqdm
 
 from src.app.generator import Generator
-from src.app.utils import check_if_gpu_available
+from src.app.utils import check_if_gpu_available, generate_video_filename
 from .resize_image import process_and_resize_image
 
 
@@ -95,11 +95,10 @@ def main(train_params, video_params, path_data, path_videos_generated, upscale_w
     else:
         frame_size = (train_params["image_size"], train_params["image_size"])
 
+    video_name = generate_video_filename(video_params, frame_size[0])
+
     out = cv2.VideoWriter(
-        os.path.join(
-            output_directory,
-            f'video_{frame_size[0]}x{frame_size[1]}_{video_params["fps"]}fps_{video_params["steps_between"]}steps_between_{video_params["interpolate_points"]}_interpolate_points_seed_{video_params["seed"]}.mp4'
-        ),
+        os.path.join(output_directory, video_name),
         cv2.VideoWriter_fourcc(*'mp4v'),
         video_params["fps"],
         frame_size
