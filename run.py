@@ -25,7 +25,7 @@ def main(args):
         image_params = utils.get_params(settings.PATH_IMAGE_PARAMS)
     
         image_params['train_version'] = args.version if args.version else image_params['train_version']
-        image_params['checkpoint'] = args.checkpoint if args.checkpoint else image_params['checkpoint']
+        image_params['checkpoint_epoch'] = args.checkpoint_epoch if args.checkpoint_epoch else image_params['checkpoint_epoch']
 
         training_params = utils.get_params(os.path.join(settings.PATH_DATA, image_params['train_version'], os.path.basename(settings.PATH_TRAIN_PARAMS)))
 
@@ -35,7 +35,7 @@ def main(args):
         video_params = utils.get_params(settings.PATH_VIDEO_PARAMS)
 
         video_params['train_version'] = args.version if args.version else video_params['train_version']
-        video_params['checkpoint'] = args.checkpoint if args.checkpoint else video_params['checkpoint']
+        video_params['checkpoint_epoch'] = args.checkpoint_epoch if args.checkpoint_epoch else video_params['checkpoint_epoch']
 
         training_params = utils.get_params(os.path.join(settings.PATH_DATA, video_params['train_version'], os.path.basename(settings.PATH_TRAIN_PARAMS)))
 
