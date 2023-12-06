@@ -72,7 +72,11 @@ def main(train_params, video_params, path_data, path_videos_generated, upscale_w
     check_if_gpu_available()
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
-    checkpoint_path = f'{path_data}/{video_params["train_version"]}/weights/checkpoint.pth'
+    checkpoint_epoch = f'_epoch_{video_params["checkpoint_epoch"]}' if video_params['checkpoint_epoch'] else ''
+    checkpoint_path = f'{path_data}/{video_params["train_version"]}/weights/checkpoint{checkpoint_epoch}.pth'
+
+    print("Checkpoint selected:", checkpoint_path)
+
     checkpoint = torch.load(checkpoint_path)
 
     generator = Generator(train_params["z_dim"], train_params["channels_img"], train_params["features_g"], img_size=train_params['image_size']).to(device)
@@ -80,9 +84,6 @@ def main(train_params, video_params, path_data, path_videos_generated, upscale_w
     generator.eval()
 
     z_points = [torch.randn(1, train_params["z_dim"]).to(device) for _ in range(video_params['interpolate_points'])]
-
-    # z_points = generate_latent_vectors(train_params["z_dim"], device, points=[54,58,54,30,54], num_variations=1, step=0.1)
-
 
     print("Generating interpolated images...")
     generated_images = multi_interpolate(generator, z_points, video_params['steps_between'])
