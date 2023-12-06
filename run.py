@@ -23,14 +23,20 @@ def main(args):
 
     if args.image:
         image_params = utils.get_params(settings.PATH_IMAGE_PARAMS)
+    
         image_params['train_version'] = args.version if args.version else image_params['train_version']
+        image_params['checkpoint_epoch'] = args.checkpoint_epoch if args.checkpoint_epoch else image_params['checkpoint_epoch']
+
         training_params = utils.get_params(os.path.join(settings.PATH_DATA, image_params['train_version'], os.path.basename(settings.PATH_TRAIN_PARAMS)))
 
         image_generate.main(training_params, image_params, settings.PATH_DATA, settings.PATH_IMAGES_GENERATED, upscale_width=args.upscale)
 
     if args.video:
         video_params = utils.get_params(settings.PATH_VIDEO_PARAMS)
+
         video_params['train_version'] = args.version if args.version else video_params['train_version']
+        video_params['checkpoint_epoch'] = args.checkpoint_epoch if args.checkpoint_epoch else video_params['checkpoint_epoch']
+
         training_params = utils.get_params(os.path.join(settings.PATH_DATA, video_params['train_version'], os.path.basename(settings.PATH_TRAIN_PARAMS)))
 
         video_generate.main(training_params, video_params, settings.PATH_DATA, settings.PATH_VIDEOS_GENERATED, upscale_width=args.upscale)
@@ -42,8 +48,10 @@ if __name__ == '__main__':
     parser.add_argument('--training', action='store_true', help='If true, executes the training')
     parser.add_argument('--image', action='store_true', help='If true, generates images')
     parser.add_argument('--video', action='store_true', help='If true, generates videos')
+
     parser.add_argument('--upscale', type=int, default=None, help='Sets the upscale width. Can be None or an integer value.')
     parser.add_argument('--version', type=str, default=None, help='Sets the version of training. Can be None or string value.')
+    parser.add_argument('--checkpoint-epoch', type=str, default=None, help='Sets the checkpoint epoch file of training. Can be None or string value.')
     
     args = parser.parse_args()
 

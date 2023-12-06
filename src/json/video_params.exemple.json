@@ -4,5 +4,7 @@
     "steps_between": 30,
     "fps": 30,
     "seed": 1,
-    "post_processing": false
+    "post_processing": false,
+    "apply_filter": false,
+    "checkpoint_epoch": null
 }
